@@ -39,6 +39,15 @@ export default class Game extends React.PureComponent {
     } else return;
   }
 
+  handleResetClick = () => {
+    this.setState({
+      board: Array(9).fill(null),
+      currentTurn: 'X',
+      xIsNext: false,
+      isGameOver: false,
+    });
+  }
+
   setGameOver = () => {
     const { board, currentTurn } = this.state;
 
@@ -87,13 +96,12 @@ export default class Game extends React.PureComponent {
   render() {
     return (
       <div className="game-container">
-        <div className="game-status">
-          {this.getStatus()}
-        </div>
+        <h1 className="game-status">{this.getStatus()}</h1>
         <div className="game">
           <Board renderSquare={this.renderSquare} />
-          <div className="game-history">
-            Step 1
+          <div className="game-controls">
+            <button className="reset-button" onClick={this.handleResetClick}>Reset</button>
+            <div className="game-history">Step 1</div>
           </div>
         </div>
       </div>
