@@ -1,0 +1,75 @@
+body {
+  width: 100vw;
+  height:100vh;
+  margin:0;
+  font-family: 'Roboto', sans-serif;
+  font-size: 15px;
+  line-height: 24px;
+  background-color: #f4f4f4;
+}
+
+#root{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-content: center;
+}
+
+.game-container {
+  width: 50%;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  padding: 32px;
+  border-radius: 8px;
+  background-color: white;
+}
+
+.game {
+  display: flex;
+}
+
+.game-status {
+  margin-bottom: 24px;
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 700;
+}
+
+.game-history {
+  width: 100%;
+  margin-left: 16px;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  grid-gap: 1px;
+  border: 1px solid black;
+  background-color: black;
+}
+
+.board-row {
+  display: flex;
+}
+
+.square {
+  width: 120px;
+  height: 120px;
+  font-size: 48px;
+  font-weight: 900;
+  text-align: center;
+  line-height: 120px;
+  background-color: white;
+}
+
+.square:hover {
+  background-color: #fafafa;
+  cursor: pointer;
+}
+
+.no-pointer {
+  cursor: default;
+}
