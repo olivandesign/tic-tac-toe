@@ -6,8 +6,10 @@ export default class Game extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
+      history: {},
       board: Array(9).fill(null),
-      currentTurn: 'X',
+      currentStep: 1,
+      stepValue: 'X',
       xIsNext: false,
       isGameOver: false,
     }
@@ -23,9 +25,9 @@ export default class Game extends React.PureComponent {
   }
 
   getStatus = () =>  {
-    const { isGameOver, currentTurn } = this.state;
+    const { isGameOver, stepValue } = this.state;
 
-    return `${isGameOver ? 'The winner is: ' : 'Current turn: '} ${currentTurn}`;
+    return `${isGameOver ? 'The winner is: ' : 'Current turn: '} ${stepValue}`;
   }
 
   handleSquareClick = i => {
@@ -40,28 +42,36 @@ export default class Game extends React.PureComponent {
   }
 
   setGameOver = () => {
-    const { board, currentTurn } = this.state;
+    const { board, stepValue } = this.state;
 
     this.setState({
       board: board,
-      currentTurn: currentTurn,
+      stepValue: stepValue,
       xIsNext: null,
       isGameOver: true,
     });
   }
 
   makeMove = (board, i) => {
-    const { currentTurn, xIsNext} = this.state;
+    const { stepValue, xIsNext, history, currentStep } = this.state;
     
     if(!board[i]) {
-      board[i] = currentTurn;
+      board[i] = stepValue;
+      history[currentStep] = board;
       this.setState({
+        history: history,
         board: board,
-        currentTurn: xIsNext ? 'X' : 'O',
+        currentStep: currentStep++,
+        stepValue: xIsNext ? 'X' : 'O',
         xIsNext: !xIsNext,
         isGameOver: false,
       });
     } else return;
+  }
+
+  getHistory = () => {
+    const { history, currentStep } = this.state;
+    
   }
 
   calculateWinner = (board) => {
@@ -93,7 +103,7 @@ export default class Game extends React.PureComponent {
         <div className="game">
           <Board renderSquare={this.renderSquare} />
           <div className="game-history">
-            Step 1
+            {this.getHistory()}
           </div>
         </div>
       </div>
