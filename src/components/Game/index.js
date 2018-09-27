@@ -1,6 +1,7 @@
 import React from 'react';
 import Board from '../Board';
 import Square from '../Square';
+import History from '../History';
 
 export default class Game extends React.PureComponent {
   constructor(props) {
@@ -23,13 +24,7 @@ export default class Game extends React.PureComponent {
       />
     );
   }
-
-  getStatus = () =>  {
-    const { isGameOver, stepValue } = this.state;
-
-    return `${isGameOver ? 'The winner is: ' : 'Current turn: '} ${stepValue}`;
-  }
-
+  
   handleSquareClick = i => {
     const { board, isGameOver } = this.state;
 
@@ -39,6 +34,12 @@ export default class Game extends React.PureComponent {
         this.setGameOver()
       }
     } else return;
+  }
+
+  getStatus = () =>  {
+    const { isGameOver, stepValue } = this.state;
+
+    return `${isGameOver ? 'The winner is: ' : 'Current turn: '} ${stepValue}`;
   }
 
   setGameOver = () => {
@@ -53,15 +54,17 @@ export default class Game extends React.PureComponent {
   }
 
   makeMove = (board, i) => {
-    const { stepValue, xIsNext, history, currentStep } = this.state;
+    const { stepValue, xIsNext, history } = this.state;
+    let { currentStep } = this.state;
     
     if(!board[i]) {
       board[i] = stepValue;
       history[currentStep] = board;
+      currentStep++;
       this.setState({
         history: history,
         board: board,
-        currentStep: currentStep++,
+        currentStep: currentStep,
         stepValue: xIsNext ? 'X' : 'O',
         xIsNext: !xIsNext,
         isGameOver: false,
@@ -69,8 +72,13 @@ export default class Game extends React.PureComponent {
     } else return;
   }
 
-  getHistory = () => {
+  renderHistoryStep = () => {
     const { history, currentStep } = this.state;
+
+    
+  }
+
+  handleHistoryClick = () => {
     
   }
 
@@ -102,9 +110,7 @@ export default class Game extends React.PureComponent {
         </div>
         <div className="game">
           <Board renderSquare={this.renderSquare} />
-          <div className="game-history">
-            {this.getHistory()}
-          </div>
+          <History />
         </div>
       </div>
     );
