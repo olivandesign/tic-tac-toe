@@ -2,20 +2,17 @@ import React from 'react';
 import Board from '../Board';
 import Square from '../Square';
 
+const initialState = {
+  board: Array(9).fill(null),
+  currentTurn: 'X',
+  xIsNext: false,
+  isGameOver: false,
+}
+
 export default class Game extends React.PureComponent {
   constructor(props) {
     super(props);
-    this.state = this.getInitialState();
-  }
-
-  getInitialState = () => {
-    const initialState = {
-      board: Array(9).fill(null),
-      currentTurn: 'X',
-      xIsNext: false,
-      isGameOver: false,
-    };
-    return initialState;
+    this.state = initialState;
   }
 
   renderSquare = i => {
@@ -45,7 +42,7 @@ export default class Game extends React.PureComponent {
   }
 
   handleResetClick = () => {
-    this.setState(this.getInitialState());
+    this.setState(initialState);
   }
 
   setGameOver = () => {
