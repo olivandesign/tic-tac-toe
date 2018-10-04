@@ -37,10 +37,6 @@ export default class Game extends React.PureComponent {
   }
 
   calculateWinner = squares => {
-    for (let i = 0; i < squares.length; i++) {
-      
-    }
-    
     const lines = [
       [0, 1, 2],
       [3, 4, 5],
