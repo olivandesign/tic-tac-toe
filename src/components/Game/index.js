@@ -1,87 +1,35 @@
 import React from 'react';
-import Board from '../Board';
 import Square from '../Square';
-import HistoryStep from '../History';
 
 export default class Game extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       history: [],
-      board: Array(9).fill(null),
-      currentStep: 1,
-      stepValue: 'X',
+      squares: [...Array(9).fill(null)],
+      currentStep: 'X',
       xIsNext: false,
-      isGameOver: false,
     }
   }
 
-  // Square methods
-  renderSquare = id => {
-    return(
-      <Square 
-        value={this.state.board[id]} 
-        onClick={() => this.handleSquareClick(id)}
-      />
-    );
-  }
-  
   handleSquareClick = id => {
-    const { board, isGameOver } = this.state;
-
-    if (!isGameOver) {
-      this.makeMove(board, id);
-      if (this.calculateWinner(board)) {
-        this.endGame()
-      }
-    } else return;
-  }
-
-  // History methods
-  renderHistoryStep = id => {
-    return(
-      <HistoryStep
-        value={id} 
-        onClick={() => this.handleHistoryClick(id)}
-      />
-    );
-  }
-
-  handleHistoryClick = id => {
-    const { history } = this.state;
-
-    this.setState(history[id]);
-  }
-
-  // Other methods
-  getStatus = () =>  {
-    const { isGameOver, stepValue } = this.state;
-
-    return `${isGameOver ? 'The winner is: ' : 'Current turn: '} ${stepValue}`;
-  }
-
-  makeMove = (board, id) => {
-    const { stepValue, xIsNext, history } = this.state;
-    let { currentStep } = this.state;
-    let historyStep = [...history];
-    let boardValue = [...board];
+    const { squares, currentStep, xIsNext } = this.state;
     
-    if(!board[id]) {
-      boardValue[id] = stepValue;
-      historyStep.push(this.state);
-      currentStep++;
+    if (this.calculateWinner(squares) || squares[id]) {
+      return null;
+    } else {
+      let newSquares = [...squares];
+      newSquares[id] = currentStep;
       this.setState({
-        history: historyStep,
-        board: boardValue,
-        currentStep: currentStep,
-        stepValue: xIsNext ? 'X' : 'O',
+        history: [],
+        squares: newSquares,
+        currentStep: xIsNext ? 'X' : 'O',
         xIsNext: !xIsNext,
-        isGameOver: false,
       });
-    } else return null;
+    }
   }
-  
-  calculateWinner = board => {
+
+  calculateWinner = squares => {
     const lines = [
       [0, 1, 2],
       [3, 4, 5],
@@ -94,41 +42,62 @@ export default class Game extends React.PureComponent {
     ];
     for (let i = 0; i < lines.length; i++) {
       const [a, b, c] = lines[i];
-      if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-        return true;
+      if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+        return squares[a];
       }
     }
-    return false;
-  }
-  
-  endGame = () => {
-    const { history, board, currentStep, stepValue } = this.state;
-
-    this.setState({
-      history: history,
-      board: board,
-      currentStep: currentStep,
-      stepValue: stepValue,
-      xIsNext: null,
-      isGameOver: true,
-    });
+    return null;
   }
 
   render() {
-    const { currentStep } = this.state;
+    const { squares, currentStep } = this.state;
+    const winner = this.calculateWinner(squares);
     
     return (
       <div className="game-container">
         <div className="game-status">
-          {this.getStatus()}
+          {winner ? `The winner: ${winner}`: `Current move: ${currentStep}`}
         </div>
         <div className="game">
-          <Board renderSquare={this.renderSquare} />
+          <div className="board">
+            {squares.map((value, id) => (
+              <Square 
+                key={id}
+                value={value} 
+                onClick={() => this.handleSquareClick(id)}
+              />
+            ))}
+          </div>
           <ul className="game-history">
-            {[...Array(currentStep).keys()].map(id => this.renderHistoryStep(id))}
           </ul>
         </div>
       </div>
     );
   }
 }
+
+
+
+
+  // makeMove = (board, id) => {
+  //   const { stepValue, xIsNext, history } = this.state;
+  //   let { currentStep } = this.state;
+  //   let historyStep = [...history];
+  //   let boardValue = [...board];
+    
+  //   if(!board[id]) {
+  //     boardValue[id] = stepValue;
+  //     historyStep.push(this.state);
+  //     currentStep++;
+  //     this.setState({
+  //       history: historyStep,
+  //       board: boardValue,
+  //       currentStep: currentStep,
+  //       stepValue: xIsNext ? 'X' : 'O',
+  //       xIsNext: !xIsNext,
+  //       isGameOver: false,
+  //     });
+  //   } else return null;
+  // }
+    
+  // 
