@@ -1,32 +1,43 @@
 import React from 'react';
 import Square from '../Square';
+import HistoryStep from '../HistoryStep';
 
 export default class Game extends React.PureComponent {
   constructor(props) {
     super(props);
-    this.state = {
+    this.state = this.getInitialState();
+  }
+
+  getInitialState = () => {
+    return {
       history: [],
-      squares: [...Array(9).fill(null)],
+      squares: Array(9).fill(null),
       currentStep: 'X',
       xIsNext: false,
     }
   }
 
   handleSquareClick = id => {
-    const { squares, currentStep, xIsNext } = this.state;
+    const { history, squares, currentStep, xIsNext } = this.state;
+    const newHistory = [...history];
+    const newSquares = [...squares];
     
     if (this.calculateWinner(squares) || squares[id]) {
       return null;
     } else {
-      let newSquares = [...squares];
       newSquares[id] = currentStep;
+      newHistory.push(this.state);
       this.setState({
-        history: [],
+        history: newHistory,
         squares: newSquares,
         currentStep: xIsNext ? 'X' : 'O',
         xIsNext: !xIsNext,
       });
     }
+  }
+
+  handleHistoryClick = id => {
+    this.setState(this.state.history[id]);
   }
 
   calculateWinner = squares => {
@@ -50,7 +61,7 @@ export default class Game extends React.PureComponent {
   }
 
   render() {
-    const { squares, currentStep } = this.state;
+    const { history, squares, currentStep } = this.state;
     const winner = this.calculateWinner(squares);
     
     return (
@@ -69,6 +80,13 @@ export default class Game extends React.PureComponent {
             ))}
           </div>
           <ul className="game-history">
+            {history.map((value, id) => (
+                <HistoryStep
+                  key={id}
+                  stepNumber={id} 
+                  onClick={() => this.handleHistoryClick(id)}
+                />
+              ))}
           </ul>
         </div>
       </div>
@@ -82,15 +100,15 @@ export default class Game extends React.PureComponent {
   // makeMove = (board, id) => {
   //   const { stepValue, xIsNext, history } = this.state;
   //   let { currentStep } = this.state;
-  //   let historyStep = [...history];
+  //   let newHistory = [...history];
   //   let boardValue = [...board];
     
   //   if(!board[id]) {
   //     boardValue[id] = stepValue;
-  //     historyStep.push(this.state);
+  //     newHistory.push(this.state);
   //     currentStep++;
   //     this.setState({
-  //       history: historyStep,
+  //       history: newHistory,
   //       board: boardValue,
   //       currentStep: currentStep,
   //       stepValue: xIsNext ? 'X' : 'O',
