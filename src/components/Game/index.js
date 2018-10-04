@@ -5,32 +5,28 @@ import HistoryStep from '../HistoryStep';
 export default class Game extends React.PureComponent {
   constructor(props) {
     super(props);
-    this.state = this.getInitialState();
-  }
-
-  getInitialState = () => {
-    return {
+    this.state = {
       history: [],
       squares: Array(9).fill(null),
-      currentStep: 'X',
+      moveValue: 'X',
       xIsNext: false,
-    }
+    };
   }
 
   handleSquareClick = id => {
-    const { history, squares, currentStep, xIsNext } = this.state;
+    const { history, squares, moveValue, xIsNext } = this.state;
     const newHistory = [...history];
     const newSquares = [...squares];
     
     if (this.calculateWinner(squares) || squares[id]) {
       return null;
     } else {
-      newSquares[id] = currentStep;
+      newSquares[id] = moveValue;
       newHistory.push(this.state);
       this.setState({
         history: newHistory,
         squares: newSquares,
-        currentStep: xIsNext ? 'X' : 'O',
+        moveValue: xIsNext ? 'X' : 'O',
         xIsNext: !xIsNext,
       });
     }
@@ -41,6 +37,10 @@ export default class Game extends React.PureComponent {
   }
 
   calculateWinner = squares => {
+    for (let i = 0; i < squares.length; i++) {
+      
+    }
+    
     const lines = [
       [0, 1, 2],
       [3, 4, 5],
@@ -61,13 +61,13 @@ export default class Game extends React.PureComponent {
   }
 
   render() {
-    const { history, squares, currentStep } = this.state;
+    const { history, squares, moveValue } = this.state;
     const winner = this.calculateWinner(squares);
     
     return (
       <div className="game-container">
         <div className="game-status">
-          {winner ? `The winner: ${winner}`: `Current move: ${currentStep}`}
+          {winner ? `${winner} is the winner!`: `Current move: ${moveValue}`}
         </div>
         <div className="game">
           <div className="board">

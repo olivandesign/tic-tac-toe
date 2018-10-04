@@ -68,10 +68,6 @@ ul {
   background-color: black;
 }
 
-.board-row {
-  display: flex;
-}
-
 .square {
   width: 120px;
   height: 120px;
