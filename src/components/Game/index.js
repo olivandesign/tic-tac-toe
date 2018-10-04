@@ -93,29 +93,3 @@ export default class Game extends React.PureComponent {
     );
   }
 }
-
-
-
-
-  // makeMove = (board, id) => {
-  //   const { stepValue, xIsNext, history } = this.state;
-  //   let { currentStep } = this.state;
-  //   let newHistory = [...history];
-  //   let boardValue = [...board];
-    
-  //   if(!board[id]) {
-  //     boardValue[id] = stepValue;
-  //     newHistory.push(this.state);
-  //     currentStep++;
-  //     this.setState({
-  //       history: newHistory,
-  //       board: boardValue,
-  //       currentStep: currentStep,
-  //       stepValue: xIsNext ? 'X' : 'O',
-  //       xIsNext: !xIsNext,
-  //       isGameOver: false,
-  //     });
-  //   } else return null;
-  // }
-    
-  // 
