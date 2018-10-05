@@ -8,32 +8,34 @@ export default class Game extends React.PureComponent {
     this.state = {
       history: [],
       squares: Array(9).fill(null),
-      moveValue: 'X',
+      currentStepValue: 'X',
       xIsNext: false,
     };
   }
 
   handleSquareClick = id => {
-    const { history, squares, moveValue, xIsNext } = this.state;
+    const { history, squares, currentStepValue, xIsNext } = this.state;
     const newHistory = [...history];
     const newSquares = [...squares];
+    const isSquareFilled = squares[id];
+    const isThereWinner = this.calculateWinner(squares);
     
-    if (this.calculateWinner(squares) || squares[id]) {
-      return null;
-    } else {
-      newSquares[id] = moveValue;
+    if (!(isSquareFilled || isThereWinner)) {
+      newSquares[id] = currentStepValue;
       newHistory.push(this.state);
       this.setState({
         history: newHistory,
         squares: newSquares,
-        moveValue: xIsNext ? 'X' : 'O',
+        currentStepValue: xIsNext ? 'X' : 'O',
         xIsNext: !xIsNext,
       });
     }
+    
+    return null;
   }
 
   handleHistoryClick = id => {
-    this.setState(this.state.history[id]);
+    this.setState(prevState => prevState.history[id]);
   }
 
   calculateWinner = squares => {
@@ -57,13 +59,13 @@ export default class Game extends React.PureComponent {
   }
 
   render() {
-    const { history, squares, moveValue } = this.state;
+    const { history, squares, currentStepValue } = this.state;
     const winner = this.calculateWinner(squares);
     
     return (
       <div className="game-container">
         <div className="game-status">
-          {winner ? `${winner} is the winner!`: `Current move: ${moveValue}`}
+          {winner ? `${winner} is the winner!`: `Current move: ${currentStepValue}`}
         </div>
         <div className="game">
           <div className="board">
