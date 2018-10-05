@@ -2,12 +2,18 @@ import React from 'react';
 import Square from '../Square';
 import HistoryStep from '../HistoryStep';
 
+const boardSize = 3;
+
+function createSquares(number) {
+  return [...Array(number)].map(row => Array(number).fill(null));
+}
+
 export default class Game extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       history: [],
-      squares: Array(9).fill(null),
+      squares: createSquares(boardSize),
       currentStepValue: 'X',
       xIsNext: false,
     };
@@ -38,25 +44,25 @@ export default class Game extends React.PureComponent {
     this.setState(prevState => prevState.history[id]);
   }
 
-  // calculateWinner = squares => {
-  //   const lines = [
-  //     [0, 1, 2],
-  //     [3, 4, 5],
-  //     [6, 7, 8],
-  //     [0, 3, 6],
-  //     [1, 4, 7],
-  //     [2, 5, 8],
-  //     [0, 4, 8],
-  //     [2, 4, 6],
-  //   ];
-  //   for (let i = 0; i < lines.length; i++) {
-  //     const [a, b, c] = lines[i];
-  //     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-  //       return squares[a];
-  //     }
-  //   }
-  //   return null;
-  // }
+  calculateWinner = squares => {
+    const lines = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6],
+    ];
+    for (let i = 0; i < lines.length; i++) {
+      const [a, b, c] = lines[i];
+      if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+        return squares[a];
+      }
+    }
+    return null;
+  }
 
   render() {
     const { history, squares, currentStepValue } = this.state;
