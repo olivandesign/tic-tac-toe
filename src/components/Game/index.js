@@ -61,23 +61,25 @@ export default class Game extends React.PureComponent {
     const { boardDimension } = this.state;
     const row = boardDimension[rowId];
     const column = [];
-    const diagonalLeft = [];
-    const diagonalRight = [];
+    const diagonalLeftToRight = [];
+    const diagonalRightToLeft = [];
 
     for (let i = 0; i < boardSize; i++ ) {
       column.push(boardDimension[i][columnId]);
-      diagonalLeft.push(boardDimension[i][i]);
-      diagonalRight.push(boardDimension[i][(boardSize - 1) - i]);
+      diagonalLeftToRight.push(boardDimension[i][i]);
+      diagonalRightToLeft.push(boardDimension[i][(boardSize - 1) - i]);
     }
 
     return (this.checkLine(row) || 
             this.checkLine(column) || 
-            this.checkLine(diagonalLeft) ||
-            this.checkLine(diagonalRight));
+            this.checkLine(diagonalLeftToRight) ||
+            this.checkLine(diagonalRightToLeft));
   }
 
   checkLine = line => {
-    if (line.length > 0) {
+    const { boardDimension } = this.state;
+
+    if (line.length === boardDimension.length) {
       return line.reduce((a, b) => a === b ? b : null);
     }
   }
