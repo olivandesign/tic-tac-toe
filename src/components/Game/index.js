@@ -4,7 +4,7 @@ import HistoryStep from '../HistoryStep';
 
 const boardSize = 3;
 
-function createSquares(num) {
+function createBoardDimension(num) {
   return [...Array(num)].map(row => Array(num).fill(null));
 }
 
@@ -13,7 +13,7 @@ export default class Game extends React.PureComponent {
     super(props);
     this.state = {
       history: [],
-      squares: createSquares(boardSize),
+      boardDimension: createBoardDimension(boardSize),
       currentStepValue: 'X',
       xIsNext: false,
       winner: null,
@@ -21,17 +21,17 @@ export default class Game extends React.PureComponent {
   }
 
   handleSquareClick = (rowId, columnId) => {
-    const { history, squares, currentStepValue, xIsNext, winner } = this.state;
+    const { history, boardDimension, currentStepValue, xIsNext, winner } = this.state;
     const newHistory = [...history];
-    const newSquares = [...squares].map(row => [...row]);
-    const isSquareFilled = squares[rowId][columnId];
+    const newboardDimension = [...boardDimension].map(row => [...row]);
+    const isSquareFilled = boardDimension[rowId][columnId];
 
     if (!(isSquareFilled || winner)) {
-      newSquares[rowId][columnId] = currentStepValue;
+      newboardDimension[rowId][columnId] = currentStepValue;
       newHistory.push(this.state);
       this.setState({
         history: newHistory,
-        squares: newSquares,
+        boardDimension: newboardDimension,
         currentStepValue: currentStepValue,
         xIsNext: xIsNext,
         winner: winner,
@@ -43,12 +43,12 @@ export default class Game extends React.PureComponent {
   }
 
   setNextStep = (rowId, columnId) => {
-    const { history, squares, xIsNext } = this.state;
+    const { history, boardDimension, xIsNext } = this.state;
     const winner = this.calculateWinner(rowId,columnId);
 
     this.setState({
       history: history,
-      squares: squares,
+      boardDimension: boardDimension,
       currentStepValue: xIsNext ? 'X' : 'O',
       xIsNext: !xIsNext,
       winner: winner ? winner : null,
@@ -58,16 +58,16 @@ export default class Game extends React.PureComponent {
   }
 
   calculateWinner = (rowId, columnId) => {
-    const { squares } = this.state;
-    const row = this.state.squares[rowId];
+    const { boardDimension } = this.state;
+    const row = boardDimension[rowId];
     const column = [];
     const diagonalLeft = [];
     const diagonalRight = [];
 
     for (let i = 0; i < boardSize; i++ ) {
-      column.push(squares[i][columnId]);
-      diagonalLeft.push(squares[i][i]);
-      diagonalRight.push(squares[i][(boardSize - 1) - i]);
+      column.push(boardDimension[i][columnId]);
+      diagonalLeft.push(boardDimension[i][i]);
+      diagonalRight.push(boardDimension[i][(boardSize - 1) - i]);
     }
 
     return (this.checkLine(row) || 
@@ -80,7 +80,6 @@ export default class Game extends React.PureComponent {
     if (line.length > 0) {
       return line.reduce((a, b) => a === b ? b : null);
     }
-    return null;
   }
 
   handleHistoryClick = id => {
@@ -88,7 +87,7 @@ export default class Game extends React.PureComponent {
   }
 
   render() {
-    const { history, squares, currentStepValue, winner } = this.state;
+    const { history, boardDimension, currentStepValue, winner } = this.state;
     
     return (
       <div className="game-container">
@@ -97,7 +96,7 @@ export default class Game extends React.PureComponent {
         </div>
         <div className="game">
           <div className="board">
-            {squares.map((row, rowId)  => (
+            {boardDimension.map((row, rowId)  => (
               row.map((value, columnId) => (
                 <Square
                   key={columnId} 
