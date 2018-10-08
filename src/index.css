@@ -37,17 +37,34 @@ ul {
 }
 
 .game-status {
-  margin-bottom: 24px;
+  margin-bottom: 16px;
   font-size: 24px;
   line-height: 32px;
   font-weight: 700;
 }
 
 .game-history {
-  width: 160px;
-  height: 364px;
+  width: 100%;
+  height: 30vw;
   margin-left: 16px;
   overflow: scroll;
+}
+
+.reset-button {
+  width: 100%;
+  height: 40px;
+  margin-bottom: 8px;
+  font-size: 15px;
+  line-height: 24px;
+  font-weight: 500;
+  outline: none;
+  border: none;
+  background-color: #fafafa;
+  cursor: pointer;
+}
+
+.reset-button:hover {
+  background-color: #f1f1f1;
 }
 
 .history-step {
@@ -61,19 +78,23 @@ ul {
 
 
 .board {
-  width: 100%;
   display: grid;
+  grid-gap: 1px;
+  border: 1px solid black;
   background-color: black;
 }
 
 .row {
   display: grid;
+  grid-gap: 1px;
 }
 
 .square {
-  height: 100%;
-  margin: 1px;
-  font-size: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 4vw;
+  vertical-align: middle;
   font-weight: 900;
   text-align: center;
   background-color: white;

@@ -23,29 +23,6 @@ export default class Game extends React.PureComponent {
     });
   }
 
-  handleSquareClick = (rowId, columnId) => {
-    const { boardSize, history, boardDimension, currentStepValue, xIsNext, winner } = this.state;
-    const newHistory = [...history];
-    const newboardDimension = [...boardDimension].map(row => [...row]);
-    const isSquareFilled = boardDimension[rowId][columnId];
-
-    if (!(isSquareFilled || winner)) {
-      newboardDimension[rowId][columnId] = currentStepValue;
-      newHistory.push(this.state);
-      this.setState({
-        boardSize: boardSize,
-        history: newHistory,
-        boardDimension: newboardDimension,
-        currentStepValue: currentStepValue,
-        xIsNext: xIsNext,
-        winner: winner,
-      }, () => {
-        this.setNextStep(rowId, columnId)
-      });
-    }
-    return null;
-  }
-
   setNextStep = (rowId, columnId) => {
     const { boardSize, history, boardDimension, xIsNext } = this.state;
     const winner = this.calculateWinner(rowId,columnId);
@@ -89,23 +66,16 @@ export default class Game extends React.PureComponent {
     }
   }
 
-  handleHistoryClick = id => {
-    this.setState(prevState => prevState.history[id]);
-  }
-
-  getBoardGrid = boardSize => {
-    const ratio = Math.round(100 / boardSize);
+  getGridStyle = (boardSize, type) => {
+    const ratio = Math.round(30 / boardSize);
+    const rowOrColumn = type.charAt(0).toUpperCase() + type.slice(1);
+    const gridStyle = `gridTemplate${rowOrColumn}s:repeat(${boardSize} , ${ratio}vw)`.split(':');
     return {
-      grid: `repeat(${boardSize}, ${ratio}%) / auto-flow`
+      [gridStyle[0]]: `${gridStyle[1]}`
     }
   }
 
-  getRowGrid = boardSize => {
-    const ratio = Math.round(100 / boardSize);
-    return {
-      grid: `repeat(1, ${ratio}%) / auto-flow`
-    }
-  }
+  // Handlers
 
   handleSelectChange = e => {
     const boardSize = parseInt(e.target.value, 10);
@@ -120,12 +90,43 @@ export default class Game extends React.PureComponent {
     });
   }
 
+  handleSquareClick = (rowId, columnId) => {
+    const { boardSize, history, boardDimension, currentStepValue, xIsNext, winner } = this.state;
+    const newHistory = [...history];
+    const newboardDimension = [...boardDimension].map(row => [...row]);
+    const isSquareFilled = boardDimension[rowId][columnId];
+
+    if (!(isSquareFilled || winner)) {
+      newboardDimension[rowId][columnId] = currentStepValue;
+      newHistory.push(this.state);
+      this.setState({
+        boardSize: boardSize,
+        history: newHistory,
+        boardDimension: newboardDimension,
+        currentStepValue: currentStepValue,
+        xIsNext: xIsNext,
+        winner: winner,
+      }, () => {
+        this.setNextStep(rowId, columnId)
+      });
+    }
+    return null;
+  }
+
+  handleHistoryClick = id => {
+    this.setState(prevState => prevState.history[id]);
+  }
+
+  handleResetClick = () => {
+    this.setState(this.setNewGame());
+  }
+
+  // Renders
+
   renderBoardGame = () => {
     const { boardSize, history, boardDimension, currentStepValue, winner } = this.state;
-    const boardGrid = this.getBoardGrid(boardSize);
-    const rowGrid = this.getRowGrid(boardSize);
-    console.log(boardGrid);
-
+    const boardGrid = this.getGridStyle(boardSize, 'row');
+    const rowGrid = this.getGridStyle(boardSize, 'column');
 
     return (
       <div className="game-container">
@@ -135,7 +136,7 @@ export default class Game extends React.PureComponent {
         <div className="game">
           <div className="board" style={boardGrid}>
             {boardDimension.map((row, rowId)  => (
-              <div className="row" style={rowGrid}>
+              <div key={rowId} className="row" style={rowGrid}>
                 {row.map((value, columnId) => (
                   <Square
                     key={columnId}
@@ -147,10 +148,13 @@ export default class Game extends React.PureComponent {
             ))}
           </div>
           <ul className="game-history">
+            <button className="reset-button" onClick={this.handleResetClick}>
+              Reset
+            </button>
             {history.map((value, id) => (
                 <HistoryStep
                   key={id}
-                  stepNumber={id} 
+                  stepNumber={id + 1}
                   onClick={() => this.handleHistoryClick(id)}
                 />
               ))}
@@ -166,8 +170,8 @@ export default class Game extends React.PureComponent {
         <div className="start-screen">
           <div className="game-status">Start new game</div>
           <div>
-            <select name="board-select" onChange={this.handleSelectChange}>
-              <option disabled selected>Choose board size</option>
+            <select name="board-select" onChange={this.handleSelectChange} defaultValue="Choose board size">
+              <option disabled>Choose board size</option>
               <option value="3">Board 3x3</option>
               <option value="4">Board 4x4</option>
               <option value="5">Board 5x5</option>
