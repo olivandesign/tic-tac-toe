@@ -2,6 +2,13 @@ import React from 'react';
 import Square from '../Square';
 import HistoryStep from '../HistoryStep';
 
+const initialState = {
+  board: Array(9).fill(null),
+  currentTurn: 'X',
+  xIsNext: false,
+  isGameOver: false,
+}
+
 export default class Game extends React.PureComponent {
   constructor(props) {
     super(props);
