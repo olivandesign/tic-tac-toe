@@ -8,6 +8,12 @@ body {
   background-color: #f4f4f4;
 }
 
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none outside none;
+}
+
 #root{
   width: 100%;
   height: 100%;
@@ -40,7 +46,18 @@ body {
 
 .game-controls {
   width: 100%;
+  height: 364px;
   margin-left: 16px;
+  overflow: scroll;
+}
+
+.history-step {
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.history-step:hover {
+  background-color: #fafafa;
 }
 
 .reset-button {
@@ -71,10 +88,6 @@ body {
   grid-gap: 1px;
   border: 1px solid black;
   background-color: black;
-}
-
-.board-row {
-  display: flex;
 }
 
 .square {
