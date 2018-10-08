@@ -63,16 +63,6 @@ export default class Game extends React.PureComponent {
     }
   }
 
-  getGridStyle = (boardSize, type) => {
-    const ratio = Math.round(30 / boardSize);
-    const rowOrColumn = type.charAt(0).toUpperCase() + type.slice(1);
-    const gridStyle = `gridTemplate${rowOrColumn}s:repeat(${boardSize} , ${ratio}vw)`.split(':');
-    
-    return {
-      [gridStyle[0]]: `${gridStyle[1]}`
-    }
-  }
-
   handleSelectChange = ({ target: {value} }) => {
     const boardSize = parseInt(value, 10);
     
@@ -114,19 +104,20 @@ export default class Game extends React.PureComponent {
   }
 
   renderBoardGame = () => {
-    const { boardSize, history, boardDimension, currentStepValue, winner } = this.state;
-    const boardGrid = this.getGridStyle(boardSize, 'row');
-    const rowGrid = this.getGridStyle(boardSize, 'column');
+    const { history, 
+            boardDimension, 
+            currentStepValue, 
+            winner } = this.state;
 
     return (
-      <div className="game-container">
+      <div className="wrapper">
         <div className="game-status">
-          {winner ? `${winner} is the winner!`: `Current move: ${currentStepValue}`}
+          {winner ? `${winner} is the winner!` : `Current move: ${currentStepValue}`}
         </div>
         <div className="game">
-          <div className="board" style={boardGrid}>
+          <div className="board">
             {boardDimension.map((row, rowId)  => (
-              <div key={rowId} className="row" style={rowGrid}>
+              <div key={rowId} className="row">
                 {row.map((value, columnId) => (
                   <Square
                     key={columnId}
@@ -139,7 +130,7 @@ export default class Game extends React.PureComponent {
           </div>
           <ul className="game-history">
             <button className="reset-button" onClick={this.handleResetClick}>
-              Reset
+              New Game
             </button>
             {history.map((value, id) => (
                 <HistoryStep
@@ -156,23 +147,25 @@ export default class Game extends React.PureComponent {
 
   renderStartScreen = () => {
     return (
-      <div className="game-container">
-        <div className="start-screen">
-          <div className="game-status">Start new game</div>
-          <div>
-            <select name="board-select" onChange={this.handleSelectChange} defaultValue="Choose board size">
-              <option disabled>Choose board size</option>
-              <option value="3">Board 3x3</option>
-              <option value="4">Board 4x4</option>
-              <option value="5">Board 5x5</option>
-            </select>
-          </div>
+      <div className="start-screen">
+        <div className="game-status">Start new game</div>
+        <div className="select-container">
+          <select name="board-select" onChange={this.handleSelectChange} defaultValue="Choose board size">
+            <option disabled>Choose board size</option>
+            <option value="3">Board 3x3</option>
+            <option value="4">Board 4x4</option>
+            <option value="5">Board 5x5</option>
+          </select>
         </div>
       </div>
     );
   }
 
   render() {
-    return this.state.boardSize ? this.renderBoardGame() : this.renderStartScreen();
+    return(
+      <div className="game-container">
+        {this.state.boardSize ? this.renderBoardGame() : this.renderStartScreen()}
+      </div>
+    );
   }
 }
