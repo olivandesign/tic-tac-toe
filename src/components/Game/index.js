@@ -24,13 +24,10 @@ export default class Game extends React.PureComponent {
   }
 
   setNextStep = (rowId, columnId) => {
-    const { boardSize, history, boardDimension, xIsNext } = this.state;
+    const { xIsNext } = this.state;
     const winner = this.calculateWinner(rowId,columnId);
 
     this.setState({
-      boardSize: boardSize,
-      history: history,
-      boardDimension: boardDimension,
       currentStepValue: xIsNext ? 'X' : 'O',
       xIsNext: !xIsNext,
       winner: winner ? winner : null,
@@ -76,10 +73,8 @@ export default class Game extends React.PureComponent {
     }
   }
 
-  // Handlers
-
-  handleSelectChange = e => {
-    const boardSize = parseInt(e.target.value, 10);
+  handleSelectChange = ({ target: {value} }) => {
+    const boardSize = parseInt(value, 10);
     
     this.setState({
       boardSize: boardSize,
@@ -92,21 +87,17 @@ export default class Game extends React.PureComponent {
   }
 
   handleSquareClick = (rowId, columnId) => {
-    const { boardSize, history, boardDimension, currentStepValue, xIsNext, winner } = this.state;
+    const { history, boardDimension, currentStepValue, winner } = this.state;
     const newHistory = [...history];
-    const newboardDimension = [...boardDimension].map(row => [...row]);
+    const newboardDimension = boardDimension.map(row => [...row]);
     const isSquareFilled = boardDimension[rowId][columnId];
 
     if (!(isSquareFilled || winner)) {
       newboardDimension[rowId][columnId] = currentStepValue;
       newHistory.push(this.state);
       this.setState({
-        boardSize: boardSize,
         history: newHistory,
         boardDimension: newboardDimension,
-        currentStepValue: currentStepValue,
-        xIsNext: xIsNext,
-        winner: winner,
       }, () => {
         this.setNextStep(rowId, columnId)
       });
@@ -121,8 +112,6 @@ export default class Game extends React.PureComponent {
   handleResetClick = () => {
     this.setState(this.setNewGame());
   }
-
-  // Renders
 
   renderBoardGame = () => {
     const { boardSize, history, boardDimension, currentStepValue, winner } = this.state;
