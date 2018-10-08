@@ -2,53 +2,32 @@ import React from 'react';
 import Square from '../Square';
 import HistoryStep from '../HistoryStep';
 
-const boardSize = 3;
-
-function createBoardDimension(num) {
-  return [...Array(num)].map(row => Array(num).fill(null));
-}
-
 export default class Game extends React.PureComponent {
   constructor(props) {
     super(props);
-    this.state = {
-      history: [],
-      boardDimension: createBoardDimension(boardSize),
-      currentStepValue: 'X',
-      xIsNext: false,
-      winner: null,
-    };
+    this.state = this.setNewGame();
   }
 
-  handleSquareClick = (rowId, columnId) => {
-    const { history, boardDimension, currentStepValue, xIsNext, winner } = this.state;
-    const newHistory = [...history];
-    const newboardDimension = [...boardDimension].map(row => [...row]);
-    const isSquareFilled = boardDimension[rowId][columnId];
+  createBoardDimension = num => {
+    return [...Array(num)].map(row => Array(num).fill(null));
+  }
 
-    if (!(isSquareFilled || winner)) {
-      newboardDimension[rowId][columnId] = currentStepValue;
-      newHistory.push(this.state);
-      this.setState({
-        history: newHistory,
-        boardDimension: newboardDimension,
-        currentStepValue: currentStepValue,
-        xIsNext: xIsNext,
-        winner: winner,
-      }, () => {
-        this.setNextStep(rowId, columnId)
-      });
-    }
-    return null;
+  setNewGame = () => {
+    return ({
+      boardSize: null,
+      history: null,
+      boardDimension: null,
+      currentStepValue: null,
+      xIsNext: null,
+      winner: null,
+    });
   }
 
   setNextStep = (rowId, columnId) => {
-    const { history, boardDimension, xIsNext } = this.state;
+    const { xIsNext } = this.state;
     const winner = this.calculateWinner(rowId,columnId);
 
     this.setState({
-      history: history,
-      boardDimension: boardDimension,
       currentStepValue: xIsNext ? 'X' : 'O',
       xIsNext: !xIsNext,
       winner: winner ? winner : null,
@@ -58,7 +37,7 @@ export default class Game extends React.PureComponent {
   }
 
   calculateWinner = (rowId, columnId) => {
-    const { boardDimension } = this.state;
+    const { boardSize, boardDimension } = this.state;
     const row = boardDimension[rowId];
     const column = [];
     const diagonalLeftToRight = [];
@@ -84,40 +63,108 @@ export default class Game extends React.PureComponent {
     }
   }
 
+  handleSelectChange = ({ target: {value} }) => {
+    const boardSize = parseInt(value, 10);
+    
+    this.setState({
+      boardSize: boardSize,
+      history: [],
+      boardDimension: this.createBoardDimension(boardSize),
+      currentStepValue: 'X',
+      xIsNext: false,
+      winner: null,
+    });
+  }
+
+  handleSquareClick = (rowId, columnId) => {
+    const { history, boardDimension, currentStepValue, winner } = this.state;
+    const newHistory = [...history];
+    const newboardDimension = boardDimension.map(row => [...row]);
+    const isSquareFilled = boardDimension[rowId][columnId];
+
+    if (!(isSquareFilled || winner)) {
+      newboardDimension[rowId][columnId] = currentStepValue;
+      newHistory.push(this.state);
+      this.setState({
+        history: newHistory,
+        boardDimension: newboardDimension,
+      }, () => {
+        this.setNextStep(rowId, columnId)
+      });
+    }
+    return null;
+  }
+
   handleHistoryClick = id => {
     this.setState(prevState => prevState.history[id]);
   }
 
-  render() {
-    const { history, boardDimension, currentStepValue, winner } = this.state;
-    
+  handleResetClick = () => {
+    this.setState(this.setNewGame());
+  }
+
+  renderBoardGame = () => {
+    const { history, 
+            boardDimension, 
+            currentStepValue, 
+            winner } = this.state;
+
     return (
-      <div className="game-container">
+      <div className="wrapper">
         <div className="game-status">
-          {winner ? `${winner} is the winner!`: `Current move: ${currentStepValue}`}
+          {winner ? `${winner} is the winner!` : `Current move: ${currentStepValue}`}
         </div>
         <div className="game">
           <div className="board">
             {boardDimension.map((row, rowId)  => (
-              row.map((value, columnId) => (
-                <Square
-                  key={columnId} 
-                  value={value} 
-                  onClick={() => this.handleSquareClick(rowId, columnId)}
-                />
-              ))
+              <div key={rowId} className="row">
+                {row.map((value, columnId) => (
+                  <Square
+                    key={columnId}
+                    value={value} 
+                    onClick={() => this.handleSquareClick(rowId, columnId)}
+                  />
+                ))}
+              </div>
             ))}
           </div>
           <ul className="game-history">
+            <button className="reset-button" onClick={this.handleResetClick}>
+              New Game
+            </button>
             {history.map((value, id) => (
                 <HistoryStep
                   key={id}
-                  stepNumber={id} 
+                  stepNumber={id}
                   onClick={() => this.handleHistoryClick(id)}
                 />
               ))}
           </ul>
         </div>
+      </div>
+    );
+  }
+
+  renderStartScreen = () => {
+    return (
+      <div className="start-screen">
+        <div className="game-status">Start new game</div>
+        <div className="select-container">
+          <select name="board-select" onChange={this.handleSelectChange} defaultValue="Choose board size">
+            <option disabled>Choose board size</option>
+            <option value="3">Board 3x3</option>
+            <option value="4">Board 4x4</option>
+            <option value="5">Board 5x5</option>
+          </select>
+        </div>
+      </div>
+    );
+  }
+
+  render() {
+    return(
+      <div className="game-container">
+        {this.state.boardSize ? this.renderBoardGame() : this.renderStartScreen()}
       </div>
     );
   }
