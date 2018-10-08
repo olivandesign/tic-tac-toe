@@ -70,6 +70,7 @@ export default class Game extends React.PureComponent {
     const ratio = Math.round(30 / boardSize);
     const rowOrColumn = type.charAt(0).toUpperCase() + type.slice(1);
     const gridStyle = `gridTemplate${rowOrColumn}s:repeat(${boardSize} , ${ratio}vw)`.split(':');
+    
     return {
       [gridStyle[0]]: `${gridStyle[1]}`
     }
@@ -154,7 +155,7 @@ export default class Game extends React.PureComponent {
             {history.map((value, id) => (
                 <HistoryStep
                   key={id}
-                  stepNumber={id + 1}
+                  stepNumber={id}
                   onClick={() => this.handleHistoryClick(id)}
                 />
               ))}
@@ -183,10 +184,6 @@ export default class Game extends React.PureComponent {
   }
 
   render() {
-    const { boardSize } = this.state;
-
-    if (!boardSize) {
-      return this.renderStartScreen();
-    } else return this.renderBoardGame();
+    return this.state.boardSize ? this.renderBoardGame() : this.renderStartScreen();
   }
 }
