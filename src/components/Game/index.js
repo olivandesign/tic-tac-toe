@@ -77,16 +77,17 @@ export default class Game extends React.PureComponent {
   }
 
   handleSquareClick = (rowId, columnId) => {
-    const { history, boardDimension, currentStepValue, winner } = this.state;
-    const newHistory = [...history];
+    const { history, 
+            boardDimension, 
+            currentStepValue, 
+            winner } = this.state;
     const newboardDimension = boardDimension.map(row => [...row]);
     const isSquareFilled = boardDimension[rowId][columnId];
 
     if (!(isSquareFilled || winner)) {
       newboardDimension[rowId][columnId] = currentStepValue;
-      newHistory.push(this.state);
       this.setState({
-        history: newHistory,
+        history: [...history, this.state],
         boardDimension: newboardDimension,
       }, () => {
         this.setNextStep(rowId, columnId)
